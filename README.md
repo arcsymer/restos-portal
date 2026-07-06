@@ -40,6 +40,17 @@ curl -s localhost:3000/me/account -H "Authorization: Bearer <accessToken>"
 # → { "balance": 150, "lifetimePoints": 150, "tier": "nowicjusz" }
 ```
 
+## Web dashboard (`web/`)
+
+A small React 19 + Vite front for customers — sign in, see balance/tier/history, redeem rewards.
+It proxies to the API on `:3000`.
+
+```sh
+cd web && pnpm install && pnpm dev    # http://localhost:5173 (API must be running)
+```
+
+![Loyalty dashboard: balance, tier, redeemable rewards, and points history](docs/dashboard.png)
+
 ## Architecture
 
 ```mermaid
