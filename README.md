@@ -20,8 +20,8 @@ services).
 
 ```sh
 git clone https://github.com/arcsymer/restos-portal && cd restos-portal
-cp .env.example .env
-pnpm install
+cp .env.example .env   # Windows cmd.exe: copy .env.example .env
+pnpm install           # postinstall runs `prisma generate`
 pnpm run db:setup      # applies migrations + seeds the rewards catalog & demo users (SQLite)
 pnpm start
 ```
