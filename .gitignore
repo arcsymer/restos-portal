@@ -1,0 +1,28 @@
+# dependencies
+/node_modules
+
+# build output
+/dist
+
+# tests
+/coverage
+/.nyc_output
+
+# env & local db
+.env
+*.db
+*.db-journal
+prisma/dev.db*
+prisma/*.db*
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# IDE / OS
+.idea
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db

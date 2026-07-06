@@ -1,0 +1,50 @@
+// Loyalty portal schema. SQLite by default (zero setup); point DATABASE_URL at
+// Postgres to switch. Enums are strings — SQLite has no native enum type.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String          @id @default(cuid())
+  email        String          @unique
+  passwordHash String
+  role         String          @default("customer") // customer | staff
+  createdAt    DateTime        @default(now())
+  account      LoyaltyAccount?
+}
+
+model LoyaltyAccount {
+  id             String        @id @default(cuid())
+  user           User          @relation(fields: [userId], references: [id])
+  userId         String        @unique
+  tier           String        @default("nowicjusz") // nowicjusz | staly | klub
+  lifetimePoints Int           @default(0)
+  createdAt      DateTime      @default(now())
+  entries        PointsEntry[]
+}
+
+model PointsEntry {
+  id        String         @id @default(cuid())
+  account   LoyaltyAccount @relation(fields: [accountId], references: [id])
+  accountId String
+  kind      String // EARN | REDEEM | ADJUST
+  points    Int // signed: earn > 0, redeem < 0
+  reason    String
+  createdAt DateTime       @default(now())
+
+  @@index([accountId])
+}
+
+model Reward {
+  id         String  @id @default(cuid())
+  code       String  @unique
+  name       String
+  costPoints Int
+  active     Boolean @default(true)
+}
