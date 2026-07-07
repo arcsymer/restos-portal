@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+.git
+.github
+test
+docs
+*.md
+.env
+prisma/dev.db
+prisma/*.db
+web
+Dockerfile
+.dockerignore
