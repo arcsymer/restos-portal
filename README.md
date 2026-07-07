@@ -80,6 +80,22 @@ Global cross-cutting: `ValidationPipe` (whitelist DTOs), `ThrottlerGuard` (tight
 6. **OpenAPI + validation** — Swagger UI, class-validator DTOs, consistent error codes.
 7. **Prisma persistence** — migrations + seed; SQLite default, Postgres via `DATABASE_URL`.
 
+## GraphQL gateway
+
+Alongside the REST API, the same loyalty operations are exposed over **GraphQL** at `/graphql`
+(code-first schema, Apollo). It reuses the exact same `LoyaltyService` and the same global JWT +
+role guards — the guards are execution-context aware, so a customer still can't call the
+staff-only `earn` mutation. Example (with a `Bearer` token):
+
+```graphql
+query { myAccount { balance tier } rewards { code costPoints } }
+mutation { redeem(rewardCode: "FREE_SOUP") { balance tier } }
+mutation { earn(email: "anna@example.com", points: 40, reason: "order") { balance } }  # staff only
+```
+
+Auth stays on REST (`/auth/login`); the GraphQL layer is the read/redeem gateway. Covered by
+`test/graphql.e2e-spec.ts` (queries, mutations, unauthenticated rejection, and the 403 path).
+
 ## Testing & CI
 
 ```sh

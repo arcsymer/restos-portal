@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthUser, IS_PUBLIC_KEY, ROLES_KEY } from './decorators';
+import { IS_PUBLIC_KEY, ROLES_KEY, requestOf } from './decorators';
 
-/** JWT guard that lets @Public() routes through. */
+/** JWT guard that lets @Public() routes through. Works for REST and GraphQL. */
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private readonly reflector: Reflector) {
@@ -25,6 +25,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
     return super.canActivate(context);
   }
+
+  // passport reads the request from here; route it to the right context type
+  getRequest(context: ExecutionContext) {
+    return requestOf(context);
+  }
 }
 
 /** Enforces @Roles(...) after authentication. */
@@ -40,7 +45,7 @@ export class RolesGuard implements CanActivate {
     if (!required || required.length === 0) {
       return true;
     }
-    const { user } = context.switchToHttp().getRequest<{ user?: AuthUser }>();
+    const user = requestOf(context).user;
     if (!user || !required.includes(user.role)) {
       throw new ForbiddenException('insufficient role');
     }
